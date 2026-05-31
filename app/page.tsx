@@ -123,10 +123,14 @@ export default function WeddingPage() {
     setLoading(true);
     try {
       await fetch("/api/rsvp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ attendance, ...form }),
-      });
+  method: "POST",
+  headers: { "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    attendance,
+    ...form,
+  }),
+});
       alert("Ответ успешно отправлен ❤️");
       setOpenForm(false);
       setStep(0);
@@ -150,9 +154,27 @@ export default function WeddingPage() {
   };
 
   useEffect(() => {
+  const enableAudio = () => {
     const audio = document.getElementById("bg-music") as HTMLAudioElement;
-    if (audio) audio.play().catch(() => {});
-  }, []);
+    if (audio && !musicOn) {
+      audio.play().then(() => {
+        setMusicOn(true);
+      }).catch(() => {});
+    }
+    // Удаляем обработчики после первого касания
+    document.removeEventListener('touchstart', enableAudio);
+    document.removeEventListener('click', enableAudio);
+  };
+  
+  // Добавляем обработчики на касание и клик
+  document.addEventListener('touchstart', enableAudio);
+  document.addEventListener('click', enableAudio);
+  
+  return () => {
+    document.removeEventListener('touchstart', enableAudio);
+    document.removeEventListener('click', enableAudio);
+  };
+}, [musicOn]);
 
   const toggleMusic = () => {
     const audio = document.getElementById("bg-music") as HTMLAudioElement;
