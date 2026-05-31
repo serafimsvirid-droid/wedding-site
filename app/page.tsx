@@ -51,7 +51,17 @@ export default function WeddingPage() {
   const [attendance, setAttendance] = useState("");
   const [loading, setLoading] = useState(false);
   const [musicOn, setMusicOn] = useState(false);
+  const [showMusicButton, setShowMusicButton] = useState(true);
 
+  const enableMusic = () => {
+    const audio = document.getElementById("bg-music") as HTMLAudioElement;
+    if (audio) {
+      audio.play().then(() => {
+        setMusicOn(true);
+        setShowMusicButton(false);
+      }).catch(() => {});
+    }
+  };
   // --- Refs для линии ---
   const timelineContainerRef = useRef<HTMLDivElement>(null);
   const timelineItemsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -83,6 +93,8 @@ export default function WeddingPage() {
     window.addEventListener("resize", updateLinePosition);
     return () => window.removeEventListener("resize", updateLinePosition);
   }, [updateLinePosition]);
+
+
 
   const [form, setForm] = useState({
     guests: [""],
@@ -205,6 +217,34 @@ export default function WeddingPage() {
   return (
     <main className="bg-[#f8f4ef] text-[#2d2d2d] overflow-hidden">
       <audio id="bg-music" loop src="/music/wedding.mp3" />
+            {showMusicButton && (
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center flex-col gap-6 p-6">
+          <div className="text-center space-y-4">
+            <h2 className="text-white text-4xl md:text-5xl font-light animate-pulse">
+              🎵 Свадьба Сергея & Ирины
+            </h2>
+            <p className="text-white/80 text-lg md:text-xl">
+              Добро пожаловать на наш праздник!
+            </p>
+            <p className="text-white/60 text-base">
+              Нажмите на кнопку, чтобы включить музыку
+            </p>
+          </div>
+          
+          <button
+            onClick={enableMusic}
+            className="mt-8 bg-white text-black px-12 py-5 rounded-full text-xl md:text-2xl font-medium shadow-2xl hover:bg-white/90 transition-all animate-pulse flex items-center gap-3"
+          >
+            <span>🔊</span>
+            Включить музыку
+            <span>🎵</span>
+          </button>
+          
+          <p className="text-white/40 text-sm text-center mt-8">
+            Без музыки праздник не тот 😊
+          </p>
+        </div>
+      )}
 
       {/* HERO */}
       <section
