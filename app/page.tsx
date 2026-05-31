@@ -96,7 +96,7 @@ export default function WeddingPage() {
 
 
 
-  const [form, setForm] = useState({
+    const [form, setForm] = useState({
     guests: [""],
     food: "",
     alcohol: [] as string[],
@@ -107,10 +107,14 @@ export default function WeddingPage() {
     wishes: "",
     email: "",
     reason: "",
+    noName: "",      // ← новое поле
+    noEmail: "",     // ← новое поле
   });
 
   const canContinue = useMemo(() => {
-    if (attendance === "no") return form.reason.length > 3;
+    if (attendance === "no") {
+  return form.noName.length > 2 && /\S+@\S+\.\S+/.test(form.noEmail);
+}
     switch (step) {
       case 0: return attendance !== "";
       case 1: return form.guests[0].length > 2;
@@ -158,6 +162,8 @@ export default function WeddingPage() {
         wishes: "",
         email: "",
         reason: "",
+        noName: "",
+        noEmail: "", 
       });
     } catch (e) {
       alert("Ошибка отправки");
@@ -461,7 +467,31 @@ export default function WeddingPage() {
                     <button onClick={() => setAttendance("yes")} className={`p-5 rounded-2xl border ${attendance === "yes" ? "bg-black text-white" : ""}`}>С удовольствием приду</button>
                     <button onClick={() => setAttendance("no")} className={`p-5 rounded-2xl border ${attendance === "no" ? "bg-black text-white" : ""}`}>К сожалению не получится</button>
                   </div>
-                  {attendance === "no" && <textarea placeholder="Если захотите — можете указать причину" className="w-full border rounded-2xl p-5 mt-6" rows={5} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} />}
+                  {attendance === "no" && (
+  <div className="space-y-4 mt-6">
+    <input
+      type="text"
+      placeholder="Ваше имя и фамилия *"
+      className="w-full border rounded-2xl p-5"
+      value={form.noName}
+      onChange={(e) => setForm({ ...form, noName: e.target.value })}
+    />
+    <input
+      type="email"
+      placeholder="Ваш email *"
+      className="w-full border rounded-2xl p-5"
+      value={form.noEmail}
+      onChange={(e) => setForm({ ...form, noEmail: e.target.value })}
+    />
+    <textarea
+      placeholder="Причина (если хотите)"
+      className="w-full border rounded-2xl p-5"
+      rows={3}
+      value={form.reason}
+      onChange={(e) => setForm({ ...form, reason: e.target.value })}
+    />
+  </div>
+)}
                 </div>
               )}
 
