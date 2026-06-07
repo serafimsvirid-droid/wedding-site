@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-const SUPABASE_URL =
-  "https://qgfngukaujlmfvhzleir.supabase.co/rest/v1";
+const supabaseUrl = 'https://jnwbmdixusxnmhvgiukn.supabase.co';
+
 
 const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZm5ndWthdWpsbWZ2aHpsZWlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzM0MDUsImV4cCI6MjA5NTQ0OTQwNX0.K2MGbU5B2NI35sv0mKGedcawvUKzelB0M_OpuQDd_bw";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impud2JtZGl4dXN4bm1odmdpdWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MzEyOTEsImV4cCI6MjA5NjQwNzI5MX0.dxQrTWo8OsSFUc7gqfggCqWz0WWZUOqkvQe8tzUdoeY";
 
 const TELEGRAM_BOT_TOKEN =
   "8895972326:AAGdh6EhcZaWSTZsZ9eohtSH8qstL2KLMRc";
