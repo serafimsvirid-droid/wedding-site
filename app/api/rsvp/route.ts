@@ -5,52 +5,23 @@ const TELEGRAM_CHAT_ID = "692436488";
 
 export async function POST(request: Request) {
   try {
-    // 1. Получаем данные из формы
     const body = await request.json();
-    console.log("Получены данные:", body);
-
-    // 2. Формируем красивое сообщение для Telegram
-    let message = `🎉 <b>НОВЫЙ ОТВЕТ RSVP!</b>\n\n`;
-    message += `📌 <b>Статус:</b> ${body.attendance === "yes" ? "✅ ПРИДУ" : "❌ НЕ ПРИДУ"}\n\n`;
-
+    
+    let message = `🎉 Новый ответ!\nСтатус: ${body.attendance === "yes" ? "Придёт" : "Не придёт"}\n`;
     if (body.attendance === "yes") {
-      message += `👥 <b>Гости:</b> ${body.guests?.filter((g: string) => g).join(", ") || "Не указано"}\n`;
-      message += `🍽 <b>Еда:</b> ${body.food || "Не указано"}\n`;
-      message += `🍷 <b>Алкоголь:</b> ${body.alcohol?.join(", ") || "Не указано"}\n`;
-      message += `✏️ <b>Свой алкоголь:</b> ${body.customAlcohol || "Нет"}\n`;
-      message += `🚗 <b>Трансфер:</b> ${body.transfer || "Не указано"}\n`;
-      message += `🅿️ <b>Парковка:</b> ${body.parking || "Не указано"}\n`;
-      message += `💬 <b>Пожелания:</b> ${body.wishes || "Нет"}\n`;
-      message += `📧 <b>Email:</b> ${body.email || "Не указан"}`;
+      message += `Гости: ${body.guests?.join(", ") || "-"}\nЕда: ${body.food || "-"}\nАлкоголь: ${body.alcohol?.join(", ") || "-"}`;
     } else {
-      message += `🙋‍♂️ <b>Имя:</b> ${body.noName || "Не указано"}\n`;
-      message += `📧 <b>Email:</b> ${body.noEmail || "Не указан"}\n`;
-      message += `📝 <b>Причина:</b> ${body.reason || "Не указана"}`;
+      message += `Имя: ${body.noName || "-"}\nEmail: ${body.noEmail || "-"}\nПричина: ${body.reason || "-"}`;
     }
 
-    // 3. Отправляем сообщение в Telegram
-    const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const tgResponse = await fetch(telegramUrl, {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: 'HTML'
-      })
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
     });
 
-    if (!tgResponse.ok) {
-      const errorText = await tgResponse.text();
-      console.error("Ошибка Telegram:", errorText);
-      return NextResponse.json({ success: false, error: "Telegram API error" }, { status: 500 });
-    }
-
-    // 4. Всё успешно
-    return NextResponse.json({ success: true, message: "Ответ успешно отправлен!" });
-
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Ошибка сервера:", error);
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false }, { status: 500 });
   }
 }
