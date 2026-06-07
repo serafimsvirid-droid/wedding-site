@@ -62,10 +62,11 @@ export default function WeddingPage() {
       }).catch(() => {});
     }
   };
+
   // --- Refs для линии ---
   const timelineContainerRef = useRef<HTMLDivElement>(null);
   const timelineItemsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const dateBlockRef = useRef<HTMLDivElement>(null); // блок с датой и "СУББОТА"
+  const dateBlockRef = useRef<HTMLDivElement>(null);
   const [lineTop, setLineTop] = useState(0);
   const [lineBottom, setLineBottom] = useState(0);
 
@@ -79,9 +80,7 @@ export default function WeddingPage() {
     const dateRect = dateBlock.getBoundingClientRect();
     const lastRect = items[items.length - 1].getBoundingClientRect();
 
-    // Линия начинается от нижней границы блока "СУББОТА"
     const topRelative = dateRect.bottom - containerRect.top;
-    // Заканчивается после последней иконки с отступом для плавного исчезания
     const bottomRelative = lastRect.bottom - containerRect.top + 80;
 
     setLineTop(topRelative);
@@ -94,9 +93,7 @@ export default function WeddingPage() {
     return () => window.removeEventListener("resize", updateLinePosition);
   }, [updateLinePosition]);
 
-
-
-    const [form, setForm] = useState({
+  const [form, setForm] = useState({
     guests: [""],
     food: "",
     alcohol: [] as string[],
@@ -107,14 +104,14 @@ export default function WeddingPage() {
     wishes: "",
     email: "",
     reason: "",
-    noName: "",      // ← новое поле
-    noEmail: "",     // ← новое поле
+    noName: "",
+    noEmail: "",
   });
 
   const canContinue = useMemo(() => {
     if (attendance === "no") {
-  return form.noName.length > 2 && /\S+@\S+\.\S+/.test(form.noEmail);
-}
+      return form.noName.length > 2 && /\S+@\S+\.\S+/.test(form.noEmail);
+    }
     switch (step) {
       case 0: return attendance !== "";
       case 1: return form.guests[0].length > 2;
@@ -139,14 +136,13 @@ export default function WeddingPage() {
     setLoading(true);
     try {
       await fetch("/api/rsvp", {
-  method: "POST",
-  headers: { "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    attendance,
-    ...form,
-  }),
-});
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          attendance,
+          ...form,
+        }),
+      });
       alert("Ответ успешно отправлен ❤️");
       setOpenForm(false);
       setStep(0);
@@ -163,7 +159,7 @@ export default function WeddingPage() {
         email: "",
         reason: "",
         noName: "",
-        noEmail: "", 
+        noEmail: "",
       });
     } catch (e) {
       alert("Ошибка отправки");
@@ -172,27 +168,25 @@ export default function WeddingPage() {
   };
 
   useEffect(() => {
-  const enableAudio = () => {
-    const audio = document.getElementById("bg-music") as HTMLAudioElement;
-    if (audio && !musicOn) {
-      audio.play().then(() => {
-        setMusicOn(true);
-      }).catch(() => {});
-    }
-    // Удаляем обработчики после первого касания
-    document.removeEventListener('touchstart', enableAudio);
-    document.removeEventListener('click', enableAudio);
-  };
-  
-  // Добавляем обработчики на касание и клик
-  document.addEventListener('touchstart', enableAudio);
-  document.addEventListener('click', enableAudio);
-  
-  return () => {
-    document.removeEventListener('touchstart', enableAudio);
-    document.removeEventListener('click', enableAudio);
-  };
-}, [musicOn]);
+    const enableAudio = () => {
+      const audio = document.getElementById("bg-music") as HTMLAudioElement;
+      if (audio && !musicOn) {
+        audio.play().then(() => {
+          setMusicOn(true);
+        }).catch(() => {});
+      }
+      document.removeEventListener('touchstart', enableAudio);
+      document.removeEventListener('click', enableAudio);
+    };
+    
+    document.addEventListener('touchstart', enableAudio);
+    document.addEventListener('click', enableAudio);
+    
+    return () => {
+      document.removeEventListener('touchstart', enableAudio);
+      document.removeEventListener('click', enableAudio);
+    };
+  }, [musicOn]);
 
   const toggleMusic = () => {
     const audio = document.getElementById("bg-music") as HTMLAudioElement;
@@ -221,9 +215,10 @@ export default function WeddingPage() {
   }, []);
 
   return (
-    <main className="bg-[#f8f4ef] text-[#2d2d2d] overflow-hidden">
+    <main className="bg-[#f8f4ef] text-[#2d2d2d] min-h-screen">
       <audio id="bg-music" loop src="/music/wedding.mp3" />
-            {showMusicButton && (
+      
+      {showMusicButton && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center flex-col gap-6 p-6">
           <div className="text-center space-y-4">
             <h2 className="text-white text-4xl md:text-5xl font-light animate-pulse">
@@ -261,7 +256,7 @@ export default function WeddingPage() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="relative z-10 text-center max-w-xl"
+          className="relative z-10 text-center max-w-xl mx-auto"
         >
           <p className="tracking-[0.5em] uppercase text-sm mb-6">Wedding Day</p>
           <h1 className="text-6xl md:text-7xl font-light mb-5">Сергей & Ирина</h1>
@@ -280,7 +275,7 @@ export default function WeddingPage() {
       </div>
 
       {/* INVITE */}
-      <section className="py-32 px-6 bg-[#fbf8f3] relative overflow-hidden">
+      <section className="py-32 px-6 bg-[#fbf8f3]">
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -341,11 +336,10 @@ export default function WeddingPage() {
       </section>
 
       {/* PROGRAM */}
-      <section className="py-32 px-6 bg-[#fbf8f3] relative overflow-hidden">
+      <section className="py-32 px-6 bg-[#fbf8f3]">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-center text-5xl font-light mb-24">ПРОГРАММА ДНЯ</h2>
 
-          {/* Блок с датой и днём недели – именно от него начинается линия */}
           <div ref={dateBlockRef} className="mb-20 text-center">
             <div className="text-2xl mb-2">10 Октября 2026 года</div>
             <div className="text-[#8c7b6b] tracking-[0.3em] uppercase">СУББОТА</div>
@@ -362,7 +356,7 @@ export default function WeddingPage() {
                 left: "50%",
                 top: lineTop,
                 height: Math.max(0, lineBottom - lineTop),
-                background: `linear-gradient(to bottom, transparent 0%, #a79683 15%, #a79683 85%, transparent 100%)`,
+                background: "linear-gradient(to bottom, transparent 0%, #a79683 15%, #a79683 85%, transparent 100%)",
                 transform: "translateX(-50%)",
               }}
             />
@@ -468,30 +462,30 @@ export default function WeddingPage() {
                     <button onClick={() => setAttendance("no")} className={`p-5 rounded-2xl border ${attendance === "no" ? "bg-black text-white" : ""}`}>К сожалению не получится</button>
                   </div>
                   {attendance === "no" && (
-  <div className="space-y-4 mt-6">
-    <input
-      type="text"
-      placeholder="Ваше имя и фамилия *"
-      className="w-full border rounded-2xl p-5"
-      value={form.noName}
-      onChange={(e) => setForm({ ...form, noName: e.target.value })}
-    />
-    <input
-      type="email"
-      placeholder="Ваш email *"
-      className="w-full border rounded-2xl p-5"
-      value={form.noEmail}
-      onChange={(e) => setForm({ ...form, noEmail: e.target.value })}
-    />
-    <textarea
-      placeholder="Причина (если хотите)"
-      className="w-full border rounded-2xl p-5"
-      rows={3}
-      value={form.reason}
-      onChange={(e) => setForm({ ...form, reason: e.target.value })}
-    />
-  </div>
-)}
+                    <div className="space-y-4 mt-6">
+                      <input
+                        type="text"
+                        placeholder="Ваше имя и фамилия *"
+                        className="w-full border rounded-2xl p-5"
+                        value={form.noName}
+                        onChange={(e) => setForm({ ...form, noName: e.target.value })}
+                      />
+                      <input
+                        type="email"
+                        placeholder="Ваш email *"
+                        className="w-full border rounded-2xl p-5"
+                        value={form.noEmail}
+                        onChange={(e) => setForm({ ...form, noEmail: e.target.value })}
+                      />
+                      <textarea
+                        placeholder="Причина (если хотите)"
+                        className="w-full border rounded-2xl p-5"
+                        rows={3}
+                        value={form.reason}
+                        onChange={(e) => setForm({ ...form, reason: e.target.value })}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
